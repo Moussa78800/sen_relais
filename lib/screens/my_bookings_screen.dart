@@ -69,7 +69,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: const Color(0xFFE30613).withOpacity(0.1),
+                color: const Color(0xFFE30613).withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -150,7 +150,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.15),
+            color: Colors.grey.withValues(alpha: 0.15),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -163,8 +163,8 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: isPast
-                  ? Colors.grey.withOpacity(0.1)
-                  : const Color(0xFFE30613).withOpacity(0.05),
+                  ? Colors.grey.withValues(alpha: 0.1)
+                  : const Color(0xFFE30613).withValues(alpha: 0.05),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -179,7 +179,9 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: isPast ? Colors.grey.withOpacity(0.2) : const Color(0xFFE30613).withOpacity(0.1),
+                    color: isPast
+                        ? Colors.grey.withValues(alpha: 0.2)
+                        : const Color(0xFFE30613).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
@@ -219,9 +221,10 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
+                    color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(

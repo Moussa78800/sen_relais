@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import 'flight_search_screen.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -113,13 +113,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: 'Voyage & Billetterie',
                   description: 'Réservez vos vols au meilleur prix',
                   onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const FlightSearchScreen(),
-                        ),
-                      );
-                   },
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const FlightSearchScreen(),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
                 _buildModuleButton(
@@ -210,10 +210,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            Icon(
+            const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: const Color(0xFFE30613),
+              color: Color(0xFFE30613),
             ),
           ],
         ),

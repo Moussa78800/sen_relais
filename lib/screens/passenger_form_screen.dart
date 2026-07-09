@@ -62,9 +62,9 @@ class _PassengerFormScreenState extends State<PassengerFormScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: Colors.white,
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator(color: Color(0xFFE30613)),
         ),
       );
@@ -92,10 +92,10 @@ class _PassengerFormScreenState extends State<PassengerFormScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE30613).withOpacity(0.05),
+                  color: const Color(0xFFE30613).withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xFFE30613).withOpacity(0.2),
+                    color: const Color(0xFFE30613).withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
@@ -137,9 +137,9 @@ class _PassengerFormScreenState extends State<PassengerFormScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               const Text(
                 'Informations du passager',
                 style: TextStyle(
@@ -148,7 +148,7 @@ class _PassengerFormScreenState extends State<PassengerFormScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Nom complet
               TextFormField(
                 controller: _nameController,
@@ -174,7 +174,7 @@ class _PassengerFormScreenState extends State<PassengerFormScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // Email
               TextFormField(
                 controller: _emailController,
@@ -204,7 +204,7 @@ class _PassengerFormScreenState extends State<PassengerFormScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // Téléphone
               TextFormField(
                 controller: _phoneController,
@@ -225,7 +225,7 @@ class _PassengerFormScreenState extends State<PassengerFormScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              
+
               // Classe
               const Text(
                 'Classe',
@@ -235,15 +235,15 @@ class _PassengerFormScreenState extends State<PassengerFormScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              
+
               _buildClassOption('economy', 'Économique', 1.0),
               const SizedBox(height: 8),
               _buildClassOption('business', 'Business', 2.5),
               const SizedBox(height: 8),
               _buildClassOption('first', 'Première', 4.0),
-              
+
               const SizedBox(height: 32),
-              
+
               // Bouton continuer
               SizedBox(
                 width: double.infinity,
@@ -310,7 +310,7 @@ class _PassengerFormScreenState extends State<PassengerFormScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFFE30613).withOpacity(0.05)
+              ? const Color(0xFFE30613).withValues(alpha: 0.05)
               : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(

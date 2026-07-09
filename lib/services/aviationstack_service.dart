@@ -1,55 +1,46 @@
-// ignore_for_file: unused_import
-
-import 'dart:convert';
+﻿import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:sen_relais/models/flight_model.dart';
 import '../models/flight_model.dart';
 
 class AviationStackService {
-  final String _apiKey = dotenv.env['AVIATIONSTACK_API_KEY'] ?? '';
+  final String _apiKey = 'dc27024811f40f817c36a81186e785da'; // Votre clé API
   final String _baseUrl = 'http://api.aviationstack.com/v1';
 
-  // Rechercher des vols (méthode compatible avec le plan gratuit)
   Future<List<FlightModel>> searchFlights({
     required String depIata,
     required String arrIata,
     required String date,
   }) async {
     try {
-      print('🔍 Recherche de vols: $depIata → $arrIata le $date');
+      print('🔍 Recherche de vols:  →  le ');
 
-      // Étape 1 : Récupérer TOUS les vols de l'aéroport de départ à cette date
       final url = Uri.parse(
-        '$_baseUrl/flights?access_key=$_apiKey'
-        '&dep_iata=$depIata'
-        '&flight_date=$date'
+        '/flights?access_key='
+        '&dep_iata='
+        '&flight_date='
         '&limit=100',
       );
 
-      print('🌐 URL: $url');
+      print('🌐 URL: ');
 
       final response = await http.get(url);
 
-      print('📡 Status code: ${response.statusCode}');
+      print('📡 Status code: ');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
         if (data['data'] != null) {
           final List<dynamic> allFlightsJson = data['data'];
-          print(
-              '✅ ${allFlightsJson.length} vols trouvés au départ de $depIata');
+          print('✅  vols trouvés au départ de ');
 
-          // Étape 2 : Filtrer côté client pour ne garder que ceux qui vont à arrIata
           final filteredFlights = allFlightsJson.where((flight) {
             final arrival = flight['arrival'] as Map<String, dynamic>?;
             return arrival?['iata'] == arrIata;
           }).toList();
 
-          print('✅ ${filteredFlights.length} vols trouvés vers $arrIata');
+          print('✅  vols trouvés vers ');
 
-          // Si aucun vol trouvé, retourner des données mockées réalistes
           if (filteredFlights.isEmpty) {
             print('⚠️ Aucun vol réel trouvé, utilisation de données mockées');
             return _getMockFlights(depIata, arrIata, date);
@@ -63,19 +54,16 @@ class AviationStackService {
           return _getMockFlights(depIata, arrIata, date);
         }
       } else {
-        print('❌ Erreur HTTP: ${response.statusCode}');
-        print('❌ Response: ${response.body}');
-        // En cas d'erreur API, retourner des données mockées
+        print('❌ Erreur HTTP: ');
+        print('❌ Response: ');
         return _getMockFlights(depIata, arrIata, date);
       }
     } catch (e) {
-      print('❌ Exception: $e');
-      // En cas d'exception, retourner des données mockées
+      print('❌ Exception: ');
       return _getMockFlights(depIata, arrIata, date);
     }
   }
 
-  // Données mockées réalistes (fallback)
   List<FlightModel> _getMockFlights(
       String depIata, String arrIata, String date) {
     final airlines = [
@@ -111,21 +99,19 @@ class AviationStackService {
         departureAirport: depInfo['name']!,
         departureIATA: depIata,
         departureCity: depInfo['city']!,
-        departureScheduled:
-            '${date}T${depHour.toString().padLeft(2, '0')}:00:00',
+        departureScheduled: 'T:00:00',
         arrivalAirport: arrInfo['name']!,
         arrivalIATA: arrIata,
         arrivalCity: arrInfo['city']!,
-        arrivalScheduled: '${date}T${arrHour.toString().padLeft(2, '0')}:00:00',
+        arrivalScheduled: 'T:00:00',
         airlineName: airline['name']!,
         airlineIATA: airline['iata']!,
-        flightNumber: '${airline['iata']}${100 + index}',
+        flightNumber: '',
         price: 150000 + (index * 50000),
       );
     });
   }
 
-  // Obtenir les aéroports populaires
   Future<List<Map<String, String>>> getPopularAirports() async {
     return [
       {
@@ -182,36 +168,6 @@ class AviationStackService {
         'city': 'Bamako',
         'name': 'Modibo Keita',
         'country': 'Mali'
-      },
-      {
-        'iata': 'CKY',
-        'city': 'Conakry',
-        'name': 'Ahmed Sékou Touré',
-        'country': 'Guinea'
-      },
-      {
-        'iata': 'NDJ',
-        'city': 'N\'Djamena',
-        'name': 'Hassan Djamous',
-        'country': 'Chad'
-      },
-      {
-        'iata': 'LFW',
-        'city': 'Lomé',
-        'name': 'Gnassingbé Eyadéma',
-        'country': 'Togo'
-      },
-      {
-        'iata': 'COO',
-        'city': 'Cotonou',
-        'name': 'Cadjehoun',
-        'country': 'Benin'
-      },
-      {
-        'iata': 'NKC',
-        'city': 'Nouakchott',
-        'name': 'Oumtounsy',
-        'country': 'Mauritania'
       },
     ];
   }

@@ -1,6 +1,9 @@
+// ignore_for_file: avoid_print, unused_import
+
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:sen_relais/models/booking_model.dart';
 import '../models/booking_model.dart';
 
 class EmailService {

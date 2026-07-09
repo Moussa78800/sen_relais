@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/aviationstack_service.dart';
-import '../models/flight_model.dart';
 import 'flight_results_screen.dart';
 
 class FlightSearchScreen extends StatefulWidget {
@@ -67,8 +66,9 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final formattedDate = '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
-      
+      final formattedDate =
+          '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
+
       final flights = await _service.searchFlights(
         depIata: _depController.text.toUpperCase(),
         arrIata: _arrController.text.toUpperCase(),
@@ -151,7 +151,7 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
+                    color: Colors.grey.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -166,9 +166,9 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> {
                     icon: Icons.flight_takeoff,
                     airports: _airports,
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   // Bouton swap
                   Center(
                     child: IconButton(
@@ -180,9 +180,9 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 12),
-                  
+
                   // Arrivée
                   _buildAirportField(
                     controller: _arrController,
@@ -190,9 +190,9 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> {
                     icon: Icons.flight_land,
                     airports: _airports,
                   ),
-                  
+
                   const SizedBox(height: 20),
-                  
+
                   // Date
                   InkWell(
                     onTap: _selectDate,
@@ -244,9 +244,9 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Bouton de recherche
             SizedBox(
               height: 56,
@@ -285,29 +285,30 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> {
                       ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Informations - Section CORRIGÉE
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFE30613).withOpacity(0.05),
+                color: const Color(0xFFE30613).withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFFE30613).withOpacity(0.2),
+                  color: const Color(0xFFE30613).withValues(alpha: 0.2),
                 ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // CORRECTION : Added Expanded around Text to prevent overflow
-                  Row(
+                  const Row(
                     children: [
-                      const Icon(Icons.info_outline, color: Color(0xFFE30613), size: 20),
-                      const SizedBox(width: 8),
+                      Icon(Icons.info_outline,
+                          color: Color(0xFFE30613), size: 20),
+                      SizedBox(width: 8),
                       Expanded(
-                        child: const Text(
+                        child: Text(
                           'Codes IATA populaires',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -423,10 +424,10 @@ class _FlightSearchScreenState extends State<FlightSearchScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: const Color(0xFFE30613).withOpacity(0.1),
+          color: const Color(0xFFE30613).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: const Color(0xFFE30613).withOpacity(0.3),
+            color: const Color(0xFFE30613).withValues(alpha: 0.3),
           ),
         ),
         child: Text(

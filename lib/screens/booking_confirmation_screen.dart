@@ -12,7 +12,8 @@ class BookingConfirmationScreen extends StatefulWidget {
   });
 
   @override
-  State<BookingConfirmationScreen> createState() => _BookingConfirmationScreenState();
+  State<BookingConfirmationScreen> createState() =>
+      _BookingConfirmationScreenState();
 }
 
 class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
@@ -23,12 +24,13 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
 
     try {
       final pdfBytes = await PdfService.generateBoardingPass(widget.booking);
-      
+
       // Créer un blob et télécharger
       final blob = html.Blob([pdfBytes], 'application/pdf');
       final url = html.Url.createObjectUrlFromBlob(blob);
       final anchor = html.AnchorElement(href: url)
-        ..setAttribute("download", "billet_${widget.booking.bookingReference}.pdf")
+        ..setAttribute(
+            "download", "billet_${widget.booking.bookingReference}.pdf")
         ..click();
       html.Url.revokeObjectUrl(url);
 
@@ -75,7 +77,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            
+
             Container(
               width: 100,
               height: 100,
@@ -84,7 +86,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.green.withOpacity(0.3),
+                    color: Colors.green.withValues(alpha: 0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -96,9 +98,9 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 color: Colors.white,
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             const Text(
               'Réservation confirmée !',
               style: TextStyle(
@@ -107,9 +109,9 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 color: Color(0xFFE30613),
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             Text(
               'Votre vol a été réservé avec succès',
               style: TextStyle(
@@ -117,9 +119,9 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 color: Colors.grey[600],
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -152,9 +154,9 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -177,25 +179,30 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                   const SizedBox(height: 8),
                   _buildDetailRow('Vol', widget.booking.flightNumber),
                   const SizedBox(height: 8),
-                  _buildDetailRow('Départ', '${widget.booking.departureIata} - ${widget.booking.departureCity}'),
+                  _buildDetailRow('Départ',
+                      '${widget.booking.departureIata} - ${widget.booking.departureCity}'),
                   const SizedBox(height: 8),
-                  _buildDetailRow('Arrivée', '${widget.booking.arrivalIata} - ${widget.booking.arrivalCity}'),
+                  _buildDetailRow('Arrivée',
+                      '${widget.booking.arrivalIata} - ${widget.booking.arrivalCity}'),
                   const SizedBox(height: 8),
-                  _buildDetailRow('Date départ', widget.booking.formattedDepartureTime),
+                  _buildDetailRow(
+                      'Date départ', widget.booking.formattedDepartureTime),
                   const SizedBox(height: 8),
-                  _buildDetailRow('Date arrivée', widget.booking.formattedArrivalTime),
+                  _buildDetailRow(
+                      'Date arrivée', widget.booking.formattedArrivalTime),
                   const SizedBox(height: 8),
                   _buildDetailRow('Passager', widget.booking.passengerName),
                   const SizedBox(height: 8),
                   _buildDetailRow('Classe', widget.booking.seatClassLabel),
                   const Divider(height: 24),
-                  _buildDetailRow('Montant payé', widget.booking.formattedPrice, isHighlighted: true),
+                  _buildDetailRow('Montant payé', widget.booking.formattedPrice,
+                      isHighlighted: true),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Bouton télécharger le billet
             SizedBox(
               width: double.infinity,
@@ -229,9 +236,9 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Bouton retour à l'accueil
             SizedBox(
               width: double.infinity,
@@ -263,7 +270,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, {bool isHighlighted = false}) {
+  Widget _buildDetailRow(String label, String value,
+      {bool isHighlighted = false}) {
     return Row(
       children: [
         Expanded(

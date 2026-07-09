@@ -1,7 +1,5 @@
-// ignore_for_file: unused_import
+﻿// ignore_for_file: avoid_print
 
-import 'package:sen_relais/models/booking_model.dart';
-import 'package:sen_relais/models/flight_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/booking_model.dart';
 import '../models/flight_model.dart';
@@ -9,7 +7,6 @@ import '../models/flight_model.dart';
 class BookingService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  // Générer une référence de réservation unique
   String _generateBookingReference() {
     final timestamp =
         DateTime.now().millisecondsSinceEpoch.toString().substring(5);
@@ -17,7 +14,6 @@ class BookingService {
     return 'SR-$timestamp-$random';
   }
 
-  // Créer une réservation
   Future<BookingModel?> createBooking({
     required String userId,
     required FlightModel flight,
@@ -29,7 +25,6 @@ class BookingService {
     try {
       print('🔵 Création de la réservation...');
 
-      // Étape 1 : Débit du wallet
       final debitResult = await _supabase.rpc('debit_wallet', params: {
         'p_user_id': userId,
         'p_amount': flight.price?.toDouble() ?? 0,
@@ -43,7 +38,6 @@ class BookingService {
 
       print('✅ Wallet débité');
 
-      // Étape 2 : Créer la réservation
       final bookingRef = _generateBookingReference();
 
       final response = await _supabase
@@ -83,7 +77,6 @@ class BookingService {
     }
   }
 
-  // Récupérer toutes les réservations d'un utilisateur
   Future<List<BookingModel>> getUserBookings(String userId) async {
     try {
       final response = await _supabase
@@ -96,21 +89,6 @@ class BookingService {
     } catch (e) {
       print('❌ Erreur récupération réservations: $e');
       return [];
-    }
-  }
-
-  // Récupérer une réservation par référence
-  Future<BookingModel?> getBookingByReference(String reference) async {
-    try {
-      final response = await _supabase
-          .from('bookings')
-          .select()
-          .eq('booking_reference', reference)
-          .single();
-
-      return BookingModel.fromMap(response);
-    } catch (e) {
-      return null;
     }
   }
 }

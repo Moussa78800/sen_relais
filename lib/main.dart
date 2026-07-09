@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -6,7 +8,7 @@ import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load(fileName: ".env");
@@ -30,15 +32,13 @@ class SenRelaisApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: const Color(0xFFE30613),
         scaffoldBackgroundColor: Colors.white,
-        colorScheme: ColorScheme.light(
-          primary: const Color(0xFFE30613),
-          secondary: const Color(0xFFB80000),
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFFE30613),
+          secondary: Color(0xFFB80000),
           surface: Colors.white,
-          background: Colors.white,
           onPrimary: Colors.white,
           onSecondary: Colors.white,
           onSurface: Colors.black87,
-          onBackground: Colors.black87,
         ),
         useMaterial3: true,
         fontFamily: 'Roboto',
@@ -65,11 +65,11 @@ class SenRelaisApp extends StatelessWidget {
         builder: (context, snapshot) {
           // En cours de chargement
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Scaffold(
+            return const Scaffold(
               backgroundColor: Colors.white,
               body: Center(
                 child: CircularProgressIndicator(
-                  color: const Color(0xFFE30613),
+                  color: Color(0xFFE30613),
                 ),
               ),
             );

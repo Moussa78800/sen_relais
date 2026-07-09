@@ -30,7 +30,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final _bookingService = BookingService();
   final _dbService = DatabaseService();
   final _authService = AuthService();
-  
+
   double _walletBalance = 0.0;
   bool _isLoading = true;
   bool _isProcessing = false;
@@ -100,17 +100,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
       if (!mounted) return;
 
       if (booking != null) {
-  // Envoyer l'email de confirmation
+        // Envoyer l'email de confirmation
         await EmailService.sendBookingConfirmation(booking);
-  
+
         Navigator.pushAndRemoveUntil(
           context,
-            MaterialPageRoute(
-              builder: (context) => BookingConfirmationScreen(booking: booking),
-            ),
-            (route) => route.isFirst,
+          MaterialPageRoute(
+            builder: (context) => BookingConfirmationScreen(booking: booking),
+          ),
+          (route) => route.isFirst,
         );
-} else {
+      } else {
         throw Exception('Échec de la création de la réservation');
       }
     } catch (e) {
@@ -128,9 +128,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: Colors.white,
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator(color: Color(0xFFE30613)),
         ),
       );
@@ -237,16 +237,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   Text(
                     '${widget.flight.airlineName} • ${widget.flight.flightNumber}',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 13,
                     ),
                   ),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Informations passager
             Container(
               padding: const EdgeInsets.all(20),
@@ -269,7 +269,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   _buildInfoRow('Nom', widget.passengerName),
                   const SizedBox(height: 8),
                   _buildInfoRow('Email', widget.passengerEmail),
-                  if (widget.passengerPhone != null && widget.passengerPhone!.isNotEmpty) ...[
+                  if (widget.passengerPhone != null &&
+                      widget.passengerPhone!.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     _buildInfoRow('Téléphone', widget.passengerPhone!),
                   ],
@@ -278,16 +279,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Wallet
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: hasEnoughBalance
-                    ? Colors.green.withOpacity(0.05)
-                    : Colors.orange.withOpacity(0.05),
+                    ? Colors.green.withValues(alpha: 0.05)
+                    : Colors.orange.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
                   color: hasEnoughBalance ? Colors.green : Colors.orange,
@@ -330,7 +331,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: hasEnoughBalance ? Colors.green : Colors.orange,
+                          color:
+                              hasEnoughBalance ? Colors.green : Colors.orange,
                         ),
                       ),
                     ],
@@ -380,9 +382,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Bouton payer
             SizedBox(
               width: double.infinity,
@@ -390,9 +392,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: ElevatedButton(
                 onPressed: _isProcessing ? null : _processPayment,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: hasEnoughBalance
-                      ? const Color(0xFFE30613)
-                      : Colors.grey,
+                  backgroundColor:
+                      hasEnoughBalance ? const Color(0xFFE30613) : Colors.grey,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

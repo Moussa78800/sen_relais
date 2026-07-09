@@ -14,7 +14,7 @@ class _RechargeWalletScreenState extends State<RechargeWalletScreen> {
   final _dbService = DatabaseService();
   final _authService = AuthService();
   final _amountController = TextEditingController();
-  
+
   double _currentBalance = 0.0;
   bool _isLoading = true;
   bool _isProcessing = false;
@@ -132,9 +132,9 @@ class _RechargeWalletScreenState extends State<RechargeWalletScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: Colors.white,
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator(color: Color(0xFFE30613)),
         ),
       );
@@ -220,9 +220,8 @@ class _RechargeWalletScreenState extends State<RechargeWalletScreen> {
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? const Color(0xFFE30613)
-                          : Colors.white,
+                      color:
+                          isSelected ? const Color(0xFFE30613) : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
@@ -312,7 +311,7 @@ class _RechargeWalletScreenState extends State<RechargeWalletScreen> {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? const Color(0xFFE30613).withOpacity(0.05)
+                          ? const Color(0xFFE30613).withValues(alpha: 0.05)
                           : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
@@ -328,7 +327,8 @@ class _RechargeWalletScreenState extends State<RechargeWalletScreen> {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: (method['color'] as Color).withOpacity(0.1),
+                            color: (method['color'] as Color)
+                                .withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(

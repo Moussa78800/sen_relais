@@ -1,11 +1,6 @@
-// ignore_for_file: prefer_const_constructors
-
-import 'dart:typed_data';
+﻿import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:flutter/material.dart';
-import 'package:sen_relais/models/booking_model.dart' show BookingModel;
 import '../models/booking_model.dart';
 
 class PdfService {
@@ -19,7 +14,6 @@ class PdfService {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
-              // En-tête
               pw.Container(
                 width: double.infinity,
                 padding: const pw.EdgeInsets.all(20),
@@ -53,30 +47,25 @@ class PdfService {
                   ],
                 ),
               ),
-
               pw.SizedBox(height: 30),
-
-              // Numéro de réservation
               pw.Container(
                 padding: const pw.EdgeInsets.all(20),
                 decoration: pw.BoxDecoration(
                   border: pw.Border.all(
-                      color: PdfColor.fromInt(0xFFE30613), width: 2),
+                      color: const PdfColor.fromInt(0xFFE30613), width: 2),
                   borderRadius: pw.BorderRadius.circular(10),
                 ),
                 child: pw.Column(
                   children: [
                     pw.Text(
                       'Numéro de réservation',
-                      style: pw.TextStyle(
-                        fontSize: 12,
-                        color: PdfColors.grey,
-                      ),
+                      style: const pw.TextStyle(
+                          fontSize: 12, color: PdfColors.grey),
                     ),
                     pw.SizedBox(height: 10),
                     pw.Text(
                       booking.bookingReference,
-                      style: pw.TextStyle(
+                      style: const pw.TextStyle(
                         fontSize: 28,
                         fontWeight: pw.FontWeight.bold,
                         color: PdfColor.fromInt(0xFFE30613),
@@ -85,23 +74,7 @@ class PdfService {
                   ],
                 ),
               ),
-
               pw.SizedBox(height: 30),
-
-              // QR Code
-              pw.Container(
-                width: 150,
-                height: 150,
-                child: pw.QrCodeWidget(
-                  data: booking.bookingReference,
-                  version: QrVersions.auto,
-                  size: 150,
-                ),
-              ),
-
-              pw.SizedBox(height: 30),
-
-              // Détails du vol
               pw.Container(
                 padding: const pw.EdgeInsets.all(20),
                 decoration: pw.BoxDecoration(
@@ -113,7 +86,7 @@ class PdfService {
                   children: [
                     pw.Text(
                       'Détails du vol',
-                      style: pw.TextStyle(
+                      style: const pw.TextStyle(
                         fontSize: 18,
                         fontWeight: pw.FontWeight.bold,
                         color: PdfColor.fromInt(0xFFE30613),
@@ -138,24 +111,6 @@ class PdfService {
                   ],
                 ),
               ),
-
-              pw.Spacer(),
-
-              // Footer
-              pw.Text(
-                'Merci d\'avoir choisi SEN RELAIS',
-                style: pw.TextStyle(
-                  fontSize: 12,
-                  color: PdfColors.grey,
-                ),
-              ),
-              pw.Text(
-                'www.senrelais.com',
-                style: pw.TextStyle(
-                  fontSize: 10,
-                  color: PdfColors.grey,
-                ),
-              ),
             ],
           );
         },
@@ -171,20 +126,12 @@ class PdfService {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Text(
-            label,
-            style: pw.TextStyle(
-              fontSize: 12,
-              color: PdfColors.grey600,
-            ),
-          ),
-          pw.Text(
-            value,
-            style: pw.TextStyle(
-              fontSize: 12,
-              fontWeight: pw.FontWeight.bold,
-            ),
-          ),
+          pw.Text(label,
+              style:
+                  const pw.TextStyle(fontSize: 12, color: PdfColors.grey600)),
+          pw.Text(value,
+              style: const pw.TextStyle(
+                  fontSize: 12, fontWeight: pw.FontWeight.bold)),
         ],
       ),
     );

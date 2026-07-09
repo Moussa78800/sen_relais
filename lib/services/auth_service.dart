@@ -1,7 +1,4 @@
-// ignore_for_file: unused_import, avoid_print
-
-import 'package:sen_relais/models/user_model.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+﻿import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_model.dart';
 import 'database_service.dart';
 
@@ -19,7 +16,7 @@ class AuthService {
     String? phone,
   }) async {
     try {
-      print('🔵 Inscription de $email...');
+      print('🔵 Inscription de ...');
 
       final response = await _supabase.auth.signUp(
         email: email,
@@ -46,7 +43,7 @@ class AuthService {
 
       return response;
     } catch (e) {
-      print('❌ Erreur inscription: $e');
+      print('❌ Erreur inscription: ');
       rethrow;
     }
   }
@@ -57,15 +54,15 @@ class AuthService {
     required String password,
   }) async {
     try {
-      print('🔵 Connexion de $email...');
+      print('🔵 Connexion de ...');
       final response = await _supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
-      print('✅ Connecté: ${response.user?.id}');
+      print('✅ Connecté: ');
       return response;
     } catch (e) {
-      print('❌ Erreur connexion: $e');
+      print('❌ Erreur connexion: ');
       rethrow;
     }
   }
@@ -77,7 +74,7 @@ class AuthService {
       await _supabase.auth.signOut();
       print('✅ Déconnecté');
     } catch (e) {
-      print('❌ Erreur déconnexion: $e');
+      print('❌ Erreur déconnexion: ');
       rethrow;
     }
   }
@@ -91,7 +88,7 @@ class AuthService {
       // CORRECTION : Convertir le Map en UserModel
       return UserModel.fromMap(response);
     } catch (e) {
-      print('❌ Erreur récupération profil: $e');
+      print('❌ Erreur récupération profil: ');
       return null;
     }
   }

@@ -66,15 +66,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (confirm == true && mounted) {
       try {
         await _authService.signOut();
+
+        if (!mounted) return;
+
+        // CORRECTION : Naviguer vers l'écran de login et nettoyer la pile
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/',
+          (route) => false,
+        );
+
+        // Afficher un message de confirmation
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Déconnexion réussie'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Erreur: $e'),
-              backgroundColor: const Color(0xFFE30613),
-            ),
-          );
-        }
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur: $e'),
+            backgroundColor: const Color(0xFFE30613),
+          ),
+        );
       }
     }
   }
@@ -82,9 +98,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: Colors.white,
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator(color: Color(0xFFE30613)),
         ),
       );
@@ -113,8 +129,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               width: 100,
               height: 100,
-              decoration: BoxDecoration(
-                color: const Color(0xFFE30613),
+              decoration: const BoxDecoration(
+                color: Color(0xFFE30613),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -157,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFE30613).withOpacity(0.3),
+                    color: const Color(0xFFE30613).withValues(alpha: 0.3),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   ),
@@ -190,7 +206,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const RechargeWalletScreen(),
+                              builder: (context) =>
+                                  const RechargeWalletScreen(),
                             ),
                           ).then((_) => _loadData());
                         },
@@ -315,7 +332,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(
                     label,
                     style: TextStyle(
-                      color: isDanger ? const Color(0xFFE30613) : Colors.black87,
+                      color:
+                          isDanger ? const Color(0xFFE30613) : Colors.black87,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),

@@ -40,7 +40,7 @@ class FlightDetailScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFE30613).withOpacity(0.3),
+                    color: const Color(0xFFE30613).withValues(alpha: 0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -85,7 +85,7 @@ class FlightDetailScreen extends StatelessWidget {
                             Text(
                               'Vol ${flight.flightNumber}',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withValues(alpha: 0.8),
                                 fontSize: 14,
                               ),
                             ),
@@ -94,9 +94,9 @@ class FlightDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Horaires
                   Row(
                     children: [
@@ -124,17 +124,16 @@ class FlightDetailScreen extends StatelessWidget {
                             Text(
                               flight.departureCity,
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withValues(alpha: 0.8),
                                 fontSize: 13,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      
                       Column(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.flight,
                             color: Colors.white,
                             size: 28,
@@ -143,13 +142,12 @@ class FlightDetailScreen extends StatelessWidget {
                           Text(
                             flight.formattedDuration,
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                               fontSize: 11,
                             ),
                           ),
                         ],
                       ),
-                      
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -176,7 +174,7 @@ class FlightDetailScreen extends StatelessWidget {
                             Text(
                               flight.arrivalCity,
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withValues(alpha: 0.8),
                                 fontSize: 13,
                               ),
                               textAlign: TextAlign.right,
@@ -189,9 +187,9 @@ class FlightDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Informations supplémentaires
             Container(
               padding: const EdgeInsets.all(20),
@@ -219,9 +217,9 @@ class FlightDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Bouton réserver
             SizedBox(
               width: double.infinity,
