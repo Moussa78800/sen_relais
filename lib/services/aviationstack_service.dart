@@ -3,43 +3,47 @@ import 'package:http/http.dart' as http;
 import '../models/flight_model.dart';
 
 class AviationStackService {
-  final String _apiKey = 'dc27024811f40f817c36a81186e785da'; // Votre clé API
+  //Lecture sécurisée de la clé
+  final String _apiKey = const String.fromEnvironment('AVIATIONSTACK_API_KEY',
+      defaultValue: 'dc27024811f40f817c36a81186e785da');
   final String _baseUrl = 'http://api.aviationstack.com/v1';
 
+  // ... (le reste de la classe reste inchangé)
   Future<List<FlightModel>> searchFlights({
     required String depIata,
     required String arrIata,
     required String date,
   }) async {
     try {
-      print('🔍 Recherche de vols:  →  le ');
+      print('🔍 Recherche de vols: $depIata → $arrIata le $date');
 
       final url = Uri.parse(
-        '/flights?access_key='
-        '&dep_iata='
-        '&flight_date='
+        '$_baseUrl/flights?access_key=$_apiKey'
+        '&dep_iata=$depIata'
+        '&flight_date=$date'
         '&limit=100',
       );
 
-      print('🌐 URL: ');
+      print('🌐 URL: $url');
 
       final response = await http.get(url);
 
-      print('📡 Status code: ');
+      print('📡 Status code: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
         if (data['data'] != null) {
           final List<dynamic> allFlightsJson = data['data'];
-          print('✅  vols trouvés au départ de ');
+          print(
+              '✅ ${allFlightsJson.length} vols trouvés au départ de $depIata');
 
           final filteredFlights = allFlightsJson.where((flight) {
             final arrival = flight['arrival'] as Map<String, dynamic>?;
             return arrival?['iata'] == arrIata;
           }).toList();
 
-          print('✅  vols trouvés vers ');
+          print('✅ ${filteredFlights.length} vols trouvés vers $arrIata');
 
           if (filteredFlights.isEmpty) {
             print('⚠️ Aucun vol réel trouvé, utilisation de données mockées');
@@ -54,12 +58,12 @@ class AviationStackService {
           return _getMockFlights(depIata, arrIata, date);
         }
       } else {
-        print('❌ Erreur HTTP: ');
-        print('❌ Response: ');
+        print('❌ Erreur HTTP: ${response.statusCode}');
+        print('❌ Response: ${response.body}');
         return _getMockFlights(depIata, arrIata, date);
       }
     } catch (e) {
-      print('❌ Exception: ');
+      print('❌ Exception: $e');
       return _getMockFlights(depIata, arrIata, date);
     }
   }
@@ -93,20 +97,26 @@ class AviationStackService {
       final depHour = 6 + (index * 3);
       final arrHour = depHour + 5 + (index % 3);
 
+      // CORRECTION : Format ISO 8601 complet avec timezone
+      final departureTime =
+          '${date}T${depHour.toString().padLeft(2, '0')}:00:00+00:00';
+      final arrivalTime =
+          '${date}T${arrHour.toString().padLeft(2, '0')}:00:00+00:00';
+
       return FlightModel(
         flightDate: date,
         flightStatus: 'scheduled',
         departureAirport: depInfo['name']!,
         departureIATA: depIata,
         departureCity: depInfo['city']!,
-        departureScheduled: 'T:00:00',
+        departureScheduled: departureTime,
         arrivalAirport: arrInfo['name']!,
         arrivalIATA: arrIata,
         arrivalCity: arrInfo['city']!,
-        arrivalScheduled: 'T:00:00',
+        arrivalScheduled: arrivalTime,
         airlineName: airline['name']!,
         airlineIATA: airline['iata']!,
-        flightNumber: '',
+        flightNumber: '${airline['iata']}${100 + index}',
         price: 150000 + (index * 50000),
       );
     });

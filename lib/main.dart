@@ -2,20 +2,28 @@
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 
+//  Lecture des variables sécurisées (avec valeurs par défaut pour le dev)
+const String supabaseUrl = String.fromEnvironment('SUPABASE_URL',
+    defaultValue: 'https://gljuzugelkoneyqnhhjq.supabase.co');
+const String supabaseAnonKey =
+    String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(fileName: ".env");
+  if (supabaseAnonKey.isEmpty) {
+    print(
+        '⚠️ Attention: SUPABASE_ANON_KEY n\'est pas définie dans le fichier .env');
+  }
 
   await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL'] ?? '',
-    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
   );
 
   runApp(const SenRelaisApp());
