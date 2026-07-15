@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import 'flight_search_screen.dart';
+import 'insurance_choice_screen.dart';
+import 'real_estate_screen.dart'; // ✅ AJOUTÉ
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -78,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFE30613).withValues(alpha: 0.3),
+                        color: const Color(0xFFE30613).withOpacity(0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
@@ -107,6 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
+
+                // Module Voyage
                 _buildModuleButton(
                   context,
                   icon: Icons.flight,
@@ -122,22 +126,43 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
+
+                // ✅ Module Immobilier (ACTIVÉ)
                 _buildModuleButton(
                   context,
                   icon: Icons.home_work,
-                  label: 'Immobilier',
-                  description: 'Trouvez votre bien idéal',
-                  onTap: () => _showComingSoon(context, 'Immobilier'),
+                  label: 'Nos Résidences',
+                  description: 'Mboro',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const RealEstateScreen(), // ✅ AJOUTÉ const
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
+
+                // Module Assurance
                 _buildModuleButton(
                   context,
                   icon: Icons.security,
                   label: 'Assurance',
                   description: 'Protégez ce qui compte',
-                  onTap: () => _showComingSoon(context, 'Assurance'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const InsuranceChoiceScreen(),
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
+
+                // Module Transport & Logistique
                 _buildModuleButton(
                   context,
                   icon: Icons.local_shipping,
@@ -147,6 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       _showComingSoon(context, 'Transport & Logistique'),
                 ),
                 const SizedBox(height: 24),
+
+                // Bouton Wallet
                 _buildWalletButton(
                   context,
                   onTap: () => _showComingSoon(context, 'Wallet'),
@@ -184,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: const Color(0xFFE30613).withValues(alpha: 0.1),
+                color: const Color(0xFFE30613).withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: const Color(0xFFE30613), size: 24),
@@ -242,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           elevation: 4,
-          shadowColor: const Color(0xFFE30613).withValues(alpha: 0.4),
+          shadowColor: const Color(0xFFE30613).withOpacity(0.4),
         ),
       ),
     );

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // <-- AJOUTÉ pour Supabase
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
+import '../services/admin_service.dart'; // <-- AJOUTÉ
 import 'my_bookings_screen.dart';
 import 'recharge_wallet_screen.dart';
+import 'dashboard_admin_screen.dart'; // <-- AJOUTÉ
+import 'my_insurances_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,14 +19,28 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _authService = AuthService();
   final _dbService = DatabaseService();
+  final _adminService = AdminService(); // <-- AJOUTÉ
+
   UserModel? _user;
   double _walletBalance = 0.0;
   bool _isLoading = true;
+  bool _isAdmin = false; // <-- AJOUTÉ
 
   @override
   void initState() {
     super.initState();
     _loadData();
+    _checkAdminStatus(); // <-- AJOUTÉ
+  }
+
+  Future<void> _checkAdminStatus() async {
+    final userId = _authService.currentUser?.id;
+    if (userId != null) {
+      final isAdmin = await _adminService.isAdmin(userId);
+      if (mounted) {
+        setState(() => _isAdmin = isAdmin);
+      }
+    }
   }
 
   Future<void> _loadData() async {
@@ -69,13 +87,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         if (!mounted) return;
 
-        // CORRECTION : Naviguer vers l'écran de login et nettoyer la pile
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/',
           (route) => false,
         );
 
-        // Afficher un message de confirmation
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Déconnexion réussie'),
@@ -173,7 +189,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFE30613).withValues(alpha: 0.3),
+                    color: const Color(0xFFE30613).withOpacity(
+                        0.3), // withValues corrigé en withOpacity pour compatibilité
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   ),
@@ -221,7 +238,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(width: 12),
                       OutlinedButton.icon(
                         onPressed: () {
-                          // TODO: Historique des transactions
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Historique bientôt disponible'),
@@ -247,12 +263,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _buildMenuItem(
               icon: Icons.airplane_ticket,
               label: 'Mes Réservations',
-              subtitle: '${_user != null ? "Voir" : ""} vos vols réservés',
+              subtitle: 'Voir vos vols réservés',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const MyBookingsScreen(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _buildMenuItem(
+              icon: Icons.shield,
+              label: 'Mes Assurances',
+              subtitle: 'Voir vos contrats actifs',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyInsurancesScreen(),
                   ),
                 );
               },
@@ -285,6 +315,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               },
             ),
+
+            // 👑 BOUTON DASHBOARD ADMIN (Visible uniquement si _isAdmin == true)
+            if (_isAdmin) ...[
+              const SizedBox(height: 12),
+              _buildMenuItem(
+                icon: Icons.admin_panel_settings,
+                label: 'Dashboard Admin',
+                subtitle: 'Gérer la plateforme et voir les statistiques',
+                onTap: () {
+                  Navigator.pushNamed(context, '/admin');
+                },
+                isDanger: true, // Pour le mettre en rouge et le faire ressortir
+              ),
+            ],
+
             const SizedBox(height: 12),
             _buildMenuItem(
               icon: Icons.logout,

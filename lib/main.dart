@@ -1,5 +1,5 @@
 // ignore_for_file: deprecated_member_use
-
+import 'screens/dashboard_admin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'screens/login_screen.dart';
@@ -96,6 +96,8 @@ class SenRelaisApp extends StatelessWidget {
       routes: {
         '/signup': (context) => const SignupScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/admin': (context) =>
+            const DashboardAdminScreen(), // ← Ajouter cette ligne
       },
     );
   }
