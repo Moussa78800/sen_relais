@@ -244,7 +244,7 @@ Les contributions sont les bienvenues ! 🎉
 - 📧 Email : [senrelais@gmail.com](mailto:senrelais@gmail.com)
 - 📱 WhatsApp : [+221 76 390 66 87](https://wa.me/221763906687)
 - 📱 WhatsApp : [+221 77 497 97 21](https://wa.me/221774979721)
-- 🌐 Site web : [sen-relais.netlify.app](https://sen-relais.netlify.app)
+- 🌐 Site web : [[appserelais.netlify.app](https://appsenrelais.netlify.app)
 
 ---
 
