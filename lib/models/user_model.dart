@@ -3,26 +3,46 @@ class UserModel {
   final String email;
   final String? fullName;
   final String? phone;
-  final String country;
-  final DateTime createdAt;
+  final String? address;
+  final bool isAdmin;
+  final bool isBlocked;
+  final bool emailNotifications;
+  final bool pushNotifications;
+  final bool smsNotifications;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   UserModel({
     required this.id,
     required this.email,
     this.fullName,
     this.phone,
-    this.country = 'SN',
-    required this.createdAt,
+    this.address,
+    this.isAdmin = false,
+    this.isBlocked = false,
+    this.emailNotifications = true,
+    this.pushNotifications = true,
+    this.smsNotifications = false,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'] as String,
-      email: map['email'] as String,
-      fullName: map['full_name'] as String?,
-      phone: map['phone'] as String?,
-      country: map['country'] as String? ?? 'SN',
-      createdAt: DateTime.parse(map['created_at'] as String),
+      id: map['id'] ?? '',
+      email: map['email'] ?? '',
+      fullName: map['full_name'],
+      phone: map['phone'],
+      address: map['address'],
+      isAdmin: map['is_admin'] ?? false,
+      isBlocked: map['is_blocked'] ?? false,
+      emailNotifications: map['email_notifications'] ?? true,
+      pushNotifications: map['push_notifications'] ?? true,
+      smsNotifications: map['sms_notifications'] ?? false,
+      createdAt:
+          map['created_at'] != null ? DateTime.parse(map['created_at']) : null,
+      updatedAt:
+          map['updated_at'] != null ? DateTime.parse(map['updated_at']) : null,
     );
   }
 
@@ -32,18 +52,14 @@ class UserModel {
       'email': email,
       'full_name': fullName,
       'phone': phone,
-      'country': country,
+      'address': address,
+      'is_admin': isAdmin,
+      'is_blocked': isBlocked,
+      'email_notifications': emailNotifications,
+      'push_notifications': pushNotifications,
+      'sms_notifications': smsNotifications,
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
     };
-  }
-
-  UserModel copyWith({String? fullName, String? phone, String? country}) {
-    return UserModel(
-      id: id,
-      email: email,
-      fullName: fullName ?? this.fullName,
-      phone: phone ?? this.phone,
-      country: country ?? this.country,
-      createdAt: createdAt,
-    );
   }
 }

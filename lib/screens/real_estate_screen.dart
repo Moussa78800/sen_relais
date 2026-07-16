@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:universal_html/html.dart' as html; // Pour ouvrir les liens
 import '../models/apartment_model.dart';
 import '../services/real_estate_service.dart';
+import 'apartment_booking_screen.dart';
 
 class RealEstateScreen extends StatefulWidget {
   const RealEstateScreen({super.key});
@@ -89,7 +89,6 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
                   ),
                 ),
               ),
-              // Badge "Photos à venir" pour gérer les attentes
               Positioned(
                 top: 12,
                 left: 12,
@@ -116,7 +115,6 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
                   ),
                 ),
               ),
-              // Badge Mboro
               Positioned(
                 bottom: 12,
                 right: 12,
@@ -208,14 +206,22 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
                         ],
                       ),
                       ElevatedButton.icon(
-                        onPressed: () => _showContactModal(context, apt.title),
-                        icon: const Icon(Icons.contact_mail, size: 18),
-                        label: const Text('Nous contacter'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ApartmentBookingScreen(apartment: apt),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.calendar_today, size: 18),
+                        label: const Text('Réserver'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFE30613),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
+                              horizontal: 20, vertical: 12),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
@@ -227,132 +233,6 @@ class _RealEstateScreenState extends State<RealEstateScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  void _showContactModal(BuildContext context, String apartmentTitle) {
-    final whatsappUrl =
-        'https://wa.me/221774979721?text=Bonjour%20SEN%20RELAIS,%20je%20suis%20intéressé%20par%20:%20$apartmentTitle';
-    final emailUrl =
-        'mailto:senrelais@gmail.com?subject=Demande%20d\'information%20-%20$apartmentTitle&body=Bonjour,%0A%0AJe%20souhaite%20avoir%20plus%20d\'informations%20sur%20l\'appartement%20:%20$apartmentTitle.%0A%0AMerci.';
-    final phoneUrl = 'tel:+221774979721';
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled:
-          true, // ✅ AJOUTÉ : Permet au menu de s'adapter à la hauteur
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height *
-              0.85, // ✅ Limite la hauteur max à 85% de l'écran
-        ),
-        padding: const EdgeInsets.all(24),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: SingleChildScrollView(
-          // ✅ AJOUTÉ : Rend le contenu défilable si besoin
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Contacter SEN RELAIS',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Pour réserver ou visiter : $apartmentTitle',
-                style: TextStyle(color: Colors.grey[600]),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-
-              // Bouton WhatsApp
-              _buildContactButton(
-                icon: Icons.message,
-                color: const Color(0xFF25D366),
-                label: 'WhatsApp',
-                subtitle: '+221 77 497 97 21',
-                onTap: () {
-                  html.window.open(whatsappUrl, '_blank');
-                  Navigator.pop(context);
-                },
-              ),
-              const SizedBox(height: 12),
-
-              // Bouton Appel
-              _buildContactButton(
-                icon: Icons.phone,
-                color: const Color(0xFFE30613),
-                label: 'Appel direct',
-                subtitle: '+221 77 497 97 21',
-                onTap: () {
-                  html.window.open(phoneUrl, '_self');
-                  Navigator.pop(context);
-                },
-              ),
-              const SizedBox(height: 12),
-
-              // Bouton Email
-              _buildContactButton(
-                icon: Icons.email,
-                color: Colors.blue,
-                label: 'Email',
-                subtitle: 'senrelais@gmail.com',
-                onTap: () {
-                  html.window.open(emailUrl, '_blank');
-                  Navigator.pop(context);
-                },
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContactButton({
-    required IconData icon,
-    required Color color,
-    required String label,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          border: Border.all(color: color.withOpacity(0.3)),
-          borderRadius: BorderRadius.circular(12),
-          color: color.withOpacity(0.05),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                          fontSize: 16)),
-                  Text(subtitle,
-                      style: TextStyle(color: Colors.grey[700], fontSize: 14)),
-                ],
-              ),
-            ),
-            Icon(Icons.arrow_forward_ios, color: color, size: 18),
-          ],
-        ),
       ),
     );
   }

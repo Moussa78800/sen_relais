@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'; // <-- AJOUTÉ pour Supabase
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
-import '../services/database_service.dart';
-import '../services/admin_service.dart'; // <-- AJOUTÉ
-import 'my_bookings_screen.dart';
-import 'recharge_wallet_screen.dart';
-import 'dashboard_admin_screen.dart'; // <-- AJOUTÉ
+import 'edit_profile_screen.dart';
+import 'settings_screen.dart';
+import 'dashboard_admin_screen.dart';
 import 'my_insurances_screen.dart';
+import 'my_bookings_screen.dart';
+import 'my_apartment_bookings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -18,329 +17,282 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _authService = AuthService();
-  final _dbService = DatabaseService();
-  final _adminService = AdminService(); // <-- AJOUTÉ
-
   UserModel? _user;
-  double _walletBalance = 0.0;
   bool _isLoading = true;
-  bool _isAdmin = false; // <-- AJOUTÉ
 
   @override
   void initState() {
     super.initState();
-    _loadData();
-    _checkAdminStatus(); // <-- AJOUTÉ
+    _loadProfile();
   }
 
-  Future<void> _checkAdminStatus() async {
+  Future<void> _loadProfile() async {
+    setState(() => _isLoading = true);
     final userId = _authService.currentUser?.id;
     if (userId != null) {
-      final isAdmin = await _adminService.isAdmin(userId);
+      final user = await _authService.getUserProfile(userId);
       if (mounted) {
-        setState(() => _isAdmin = isAdmin);
-      }
-    }
-  }
-
-  Future<void> _loadData() async {
-    final userId = _authService.currentUser?.id;
-    if (userId == null) return;
-
-    final user = await _authService.getUserProfile(userId);
-    final balance = await _dbService.getWalletBalance(userId);
-
-    if (mounted) {
-      setState(() {
-        _user = user;
-        _walletBalance = balance;
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _handleLogout() async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Déconnexion'),
-        content: const Text('Voulez-vous vraiment vous déconnecter ?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Déconnexion',
-              style: TextStyle(color: Color(0xFFE30613)),
-            ),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm == true && mounted) {
-      try {
-        await _authService.signOut();
-
-        if (!mounted) return;
-
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/',
-          (route) => false,
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Déconnexion réussie'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-          ),
-        );
-      } catch (e) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur: $e'),
-            backgroundColor: const Color(0xFFE30613),
-          ),
-        );
+        setState(() {
+          _user = user;
+          _isLoading = false;
+        });
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: CircularProgressIndicator(color: Color(0xFFE30613)),
-        ),
-      );
-    }
-
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
+        title: const Text('Mon Profil'),
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFFE30613),
         elevation: 0,
-        title: const Text(
-          'Mon Profil',
-          style: TextStyle(
-            color: Color(0xFFE30613),
-            fontWeight: FontWeight.bold,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              if (_user != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingsScreen(user: _user!),
+                  ),
+                ).then((_) => _loadProfile());
+              }
+            },
           ),
-        ),
-        centerTitle: true,
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            // Avatar
-            Container(
-              width: 100,
-              height: 100,
-              decoration: const BoxDecoration(
-                color: Color(0xFFE30613),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  _user?.fullName?.substring(0, 1).toUpperCase() ?? 'U',
-                  style: const TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _user?.fullName ?? 'Utilisateur',
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFE30613),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              _user?.email ?? '',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-            ),
-            const SizedBox(height: 32),
-
-            // Wallet Card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFE30613), Color(0xFFB80000)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFE30613).withOpacity(
-                        0.3), // withValues corrigé en withOpacity pour compatibilité
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Solde Wallet',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${_walletBalance.toStringAsFixed(0)} XOF',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _user == null
+              ? const Center(child: Text('Erreur de chargement'))
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
                     children: [
-                      ElevatedButton.icon(
-                        onPressed: () {
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundColor: const Color(0xFFE30613),
+                        child: Text(
+                          (_user!.fullName ?? _user!.email)[0].toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 48,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        _user!.fullName ?? 'Utilisateur',
+                        style: const TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _user!.email,
+                        style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
+                      if (_user!.isAdmin)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE30613).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.verified,
+                                  color: Color(0xFFE30613), size: 16),
+                              SizedBox(width: 4),
+                              Text(
+                                'Administrateur',
+                                style: TextStyle(
+                                  color: Color(0xFFE30613),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(height: 32),
+                      Card(
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.phone,
+                                  color: Color(0xFFE30613)),
+                              title: const Text('Téléphone'),
+                              subtitle: Text(_user!.phone ?? 'Non renseigné'),
+                            ),
+                            const Divider(height: 1),
+                            ListTile(
+                              leading: const Icon(Icons.location_on,
+                                  color: Color(0xFFE30613)),
+                              title: const Text('Adresse'),
+                              subtitle:
+                                  Text(_user!.address ?? 'Non renseignée'),
+                            ),
+                            const Divider(height: 1),
+                            ListTile(
+                              leading: const Icon(Icons.calendar_today,
+                                  color: Color(0xFFE30613)),
+                              title: const Text('Membre depuis'),
+                              subtitle: Text(_formatDate(_user!.createdAt)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      _buildMenuItem(
+                        icon: Icons.confirmation_number,
+                        label: 'Mes Réservations (Vols)',
+                        subtitle: 'Voir vos billets d\'avion',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MyBookingsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _buildMenuItem(
+                        icon: Icons.home,
+                        label: 'Mes Locations Immobilières',
+                        subtitle: 'Voir vos locations d\'appartements',
+                        onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  const RechargeWalletScreen(),
-                            ),
-                          ).then((_) => _loadData());
-                        },
-                        icon: const Icon(Icons.add, size: 18),
-                        label: const Text('Recharger'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFFE30613),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      OutlinedButton.icon(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Historique bientôt disponible'),
-                              backgroundColor: Color(0xFFE30613),
+                                  const MyApartmentBookingsScreen(),
                             ),
                           );
                         },
-                        icon: const Icon(Icons.history, size: 18),
-                        label: const Text('Historique'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(color: Colors.white),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildMenuItem(
+                        icon: Icons.shield,
+                        label: 'Mes Assurances',
+                        subtitle: 'Voir vos contrats actifs',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MyInsurancesScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EditProfileScreen(user: _user!),
+                              ),
+                            ).then((result) {
+                              if (result == true) _loadProfile();
+                            });
+                          },
+                          icon: const Icon(Icons.edit),
+                          label: const Text('Modifier mon profil'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE30613),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      if (_user!.isAdmin) ...[
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DashboardAdminScreen(),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.dashboard,
+                                color: Color(0xFFE30613)),
+                            label: const Text(
+                              'Dashboard Admin',
+                              style: TextStyle(color: Color(0xFFE30613)),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                  color: Color(0xFFE30613), width: 2),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    SettingsScreen(user: _user!),
+                              ),
+                            ).then((_) => _loadProfile());
+                          },
+                          icon: const Icon(Icons.settings,
+                              color: Color(0xFFE30613)),
+                          label: const Text(
+                            'Paramètres',
+                            style: TextStyle(color: Color(0xFFE30613)),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(
+                                color: Color(0xFFE30613), width: 2),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextButton.icon(
+                          onPressed: () => _confirmLogout(context),
+                          icon: const Icon(Icons.logout, color: Colors.red),
+                          label: const Text(
+                            'Se déconnecter',
+                            style: TextStyle(color: Colors.red, fontSize: 16),
+                          ),
+                          style: TextButton.styleFrom(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16)),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-
-            // Menu options
-            _buildMenuItem(
-              icon: Icons.airplane_ticket,
-              label: 'Mes Réservations',
-              subtitle: 'Voir vos vols réservés',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MyBookingsScreen(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            _buildMenuItem(
-              icon: Icons.shield,
-              label: 'Mes Assurances',
-              subtitle: 'Voir vos contrats actifs',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MyInsurancesScreen(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            _buildMenuItem(
-              icon: Icons.person,
-              label: 'Modifier le profil',
-              subtitle: 'Nom, email, téléphone',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Bientôt disponible'),
-                    backgroundColor: Color(0xFFE30613),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            _buildMenuItem(
-              icon: Icons.settings,
-              label: 'Paramètres',
-              subtitle: 'Notifications, sécurité',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Bientôt disponible'),
-                    backgroundColor: Color(0xFFE30613),
-                  ),
-                );
-              },
-            ),
-
-            // 👑 BOUTON DASHBOARD ADMIN (Visible uniquement si _isAdmin == true)
-            if (_isAdmin) ...[
-              const SizedBox(height: 12),
-              _buildMenuItem(
-                icon: Icons.admin_panel_settings,
-                label: 'Dashboard Admin',
-                subtitle: 'Gérer la plateforme et voir les statistiques',
-                onTap: () {
-                  Navigator.pushNamed(context, '/admin');
-                },
-                isDanger: true, // Pour le mettre en rouge et le faire ressortir
-              ),
-            ],
-
-            const SizedBox(height: 12),
-            _buildMenuItem(
-              icon: Icons.logout,
-              label: 'Déconnexion',
-              subtitle: 'Se déconnecter de l\'application',
-              onTap: _handleLogout,
-              isDanger: true,
-            ),
-          ],
-        ),
-      ),
+                ),
     );
   }
 
@@ -349,7 +301,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String label,
     required String subtitle,
     required VoidCallback onTap,
-    bool isDanger = false,
   }) {
     return InkWell(
       onTap: onTap,
@@ -357,51 +308,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(
-            color: isDanger ? const Color(0xFFE30613) : Colors.grey[300]!,
-          ),
+          border: Border.all(color: const Color(0xFFE30613).withOpacity(0.3)),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: isDanger ? const Color(0xFFE30613) : Colors.grey[700],
-              size: 28,
-            ),
+            Icon(icon, color: const Color(0xFFE30613), size: 28),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      color:
-                          isDanger ? const Color(0xFFE30613) : Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
+                  Text(label,
+                      style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFE30613))),
                   const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text(subtitle,
+                      style: TextStyle(fontSize: 13, color: Colors.grey[600])),
                 ],
               ),
             ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: isDanger ? const Color(0xFFE30613) : Colors.grey[400],
-            ),
+            const Icon(Icons.arrow_forward_ios,
+                size: 16, color: Color(0xFFE30613)),
           ],
         ),
       ),
+    );
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'inconnu';
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  Future<void> _confirmLogout(BuildContext context) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Se déconnecter ?'),
+        content: const Text(
+            'Vous devrez vous reconnecter pour accéder à votre compte.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Annuler')),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Se déconnecter',
+                style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true && mounted) {
+      await _authService.signOut();
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const _LoginRedirectScreen()),
+          (route) => false,
+        );
+      }
+    }
+  }
+}
+
+class _LoginRedirectScreen extends StatelessWidget {
+  const _LoginRedirectScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.of(context).pushReplacementNamed('/');
+    });
+
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator(color: Color(0xFFE30613))),
     );
   }
 }

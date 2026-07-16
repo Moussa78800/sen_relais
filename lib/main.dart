@@ -6,6 +6,7 @@ import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 //  Lecture des variables sécurisées (avec valeurs par défaut pour le dev)
 const String supabaseUrl = String.fromEnvironment('SUPABASE_URL',
@@ -38,6 +39,7 @@ class SenRelaisApp extends StatelessWidget {
       title: 'SEN RELAIS',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        textTheme: GoogleFonts.interTextTheme(), //
         primaryColor: const Color(0xFFE30613),
         scaffoldBackgroundColor: Colors.white,
         colorScheme: const ColorScheme.light(

@@ -3,7 +3,8 @@ import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import 'flight_search_screen.dart';
 import 'insurance_choice_screen.dart';
-import 'real_estate_screen.dart'; // ✅ AJOUTÉ
+import 'real_estate_screen.dart';
+import 'wallet_screen.dart'; // ✅ AJOUTÉ pour le Wallet
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -127,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // ✅ Module Immobilier (ACTIVÉ)
+                // Module Immobilier
                 _buildModuleButton(
                   context,
                   icon: Icons.home_work,
@@ -137,8 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            const RealEstateScreen(), // ✅ AJOUTÉ const
+                        builder: (context) => const RealEstateScreen(),
                       ),
                     );
                   },
@@ -173,10 +173,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Bouton Wallet
+                // ✅ Bouton Wallet (CORRIGÉ)
                 _buildWalletButton(
                   context,
-                  onTap: () => _showComingSoon(context, 'Wallet'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WalletScreen(),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
